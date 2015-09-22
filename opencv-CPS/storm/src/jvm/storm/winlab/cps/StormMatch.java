@@ -276,7 +276,7 @@ public class StormMatch {
 
         if(args != null && args.length > 0){
             // Run it on a live storm cluser
-            conf.setNumWorkers(3);
+            conf.setNumWorkers(4);
             StormSubmitter.submitTopology(args[0],conf,builder.createTopology());
         } else {
             // Run it on a simulated local cluster

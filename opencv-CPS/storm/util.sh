@@ -29,4 +29,13 @@ kill)
 	echo "now kill the topo CPS"
 	storm kill CPS
 	;;
+killall)
+        echo "now kill all storm processes"
+        jps -l | grep core | cut -d ' ' -f 1 | xargs -rn1 kill
+        jps -l | grep nimbus | cut -d ' ' -f 1 | xargs -rn1 kill
+        jps -l | grep QuorumPeerMain | cut -d ' ' -f 1 | xargs -rn1 kill
+        jps -l | grep supervisor | cut -d ' ' -f 1 | xargs -rn1 kill
+        jps -l | grep SpoutFinder | cut -d ' ' -f 1 | xargs -rn1 kill
+	jps -l | grep worker | cut -d ' ' -f 1 | xargs -rn1 kill
+
 esac
