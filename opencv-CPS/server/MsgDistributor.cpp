@@ -56,8 +56,8 @@ int MsgDistributor::init(int src_GUID, int dst_GUID, int set_debug)
     int ret = 0;
     printf("------ open the MF now -------\n");
     /* node10-11 virtual:21:50001, node10-17:virtual:22:50002 */
-    
-    const char *message = "virtual:21:50001";
+    string msg = "virtual:21:50001";
+    const char *message = msg.c_str();
     ret = mfopen(&handle,message, 0, src_GUID);
     if(ret)
     {
