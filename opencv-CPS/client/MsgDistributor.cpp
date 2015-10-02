@@ -55,7 +55,11 @@ int MsgDistributor::init(int src_GUID, int dst_GUID, int set_debug)
     /* init mfapi here, actually only for the receive part */
     int ret = 0;
     printf("------ open the MF now -------\n");
-    ret = mfopen(&handle, "basic\0", 0, src_GUID);
+    /* client virtual: virtual:1:10001 */
+    string msg = "virtual:1:10001";
+
+    const char * message = msg.c_str();
+    ret = mfopen(&handle, message, 0, src_GUID);
     if(ret)
     {
         printf("mfopen error\n"); 
@@ -181,7 +185,7 @@ int MsgDistributor::connect()
     // send the connect request
     pthread_mutex_lock(&send_lock);
     if (debug) printf("now send the connect command to other\n");
-    ret = mfsend(&handle, header, sizeof(header), dst_GUID, 0);
+    ret = mfsend(&handle, header, sizeof(header), dst_GUID, MF_VIRTUAL_DATA);
     if(ret < 0)
     {
         printf ("mfsendmsg error\n");
@@ -256,7 +260,7 @@ int MsgDistributor::accept()
     sprintf(header, "accepted,%d,", mfsockid);
     pthread_mutex_lock(&send_lock);
     if (debug) printf("now response to other\n");    
-    ret = mfsend(&handle, header, sizeof(header), dst_GUID, 0);
+    ret = mfsend(&handle, header, sizeof(header), dst_GUID, MF_VIRTUAL_DATA);
     if(ret < 0)
     {
         printf ("mfsendmsg error\n");
@@ -315,7 +319,7 @@ int MsgDistributor::send(int sock, char* buffer, int size)
     memcpy(subindex, buffer, size);
     if (debug) printf("size: %d, content_length: %d\n", size, content_length);
     if (debug) printf("now send message in socket: %d\n", sock);
-    ret = mfsend(&handle, content, sizeof(content), dst_GUID, 0);
+    ret = mfsend(&handle, content, sizeof(content), dst_GUID, MF_VIRTUAL_DATA);
     if(ret < 0)
     {
         printf ("mfsendmsg error\n");
@@ -414,7 +418,7 @@ int MsgDistributor::close(int sock, int passive)
         char content[BUFFER_SIZE];
         sprintf(content, "close,%d,", sock);
         if (debug) printf("send close command\n");
-        ret = mfsend(&handle, content, sizeof(content), dst_GUID, 0);
+        ret = mfsend(&handle, content, sizeof(content), dst_GUID, MF_VIRTUAL_DATA);
         if(ret < 0)
         {
             printf ("mfsendmsg error\n");
