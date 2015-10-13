@@ -349,7 +349,7 @@ vector<float> ImgMatch::calLocation(){
         if (dist < min_dist) min_dist = dist;
         if (dist > max_dist) max_dist = dist;
     }
- 
+    delete matchImgDesp;
     //-- Draw only "good" matches (i.e. whose distance is less than 3*min_dist )
     std::vector< DMatch > good_matches;
  
