@@ -20,7 +20,7 @@ string ImgMatch::featureClusterAdd;
 string ImgMatch::imgInfoAdd;
 vector<int> ImgMatch::index_IMG;
 vector<int> dscCnt_IMG;
-int ImgMatch::minHessian = 1700;
+int ImgMatch::minHessian = 1000;
 int lastIndex = 0;
 int imgCount = 0;
 //Changed here
@@ -30,7 +30,7 @@ flann::Index ImgMatch::flannIndex;
 //till here
 ImgMatch::ImgMatch()
 {
-    minHessian = 1700;
+    minHessian = 1000;
  
 }
  
@@ -39,17 +39,15 @@ ImgMatch::~ImgMatch()
 }
 //get all descriptor of images in database, save index_img to file;
 void ImgMatch::init_DB(int size_DB,string add_DB, string indexImgAdd,string featureClusterAdd){
+
     printf("\nStart calculating the descriptors\n");
+
     set_dbSize(size_DB);
     SurfFeatureDetector extractor;
-    // SurfFeatureDetector detector(minHessian);
-    SurfFeatureDetector detector(2500);
-    /*
-        \loop calculate descriptors of iamges in database
-    */
+    SurfFeatureDetector detector(minHessian);
+    /* loop calculate descriptors of iamges in databas */
     for (int i = 1; i <= size_DB; i++){
-        char  imgName[100]; 
-         
+        char  imgName[100];     
         sprintf(imgName, "%d.jpg", i);
         string fileName;
         string fileAdd = add_DB;
@@ -64,15 +62,12 @@ void ImgMatch::init_DB(int size_DB,string add_DB, string indexImgAdd,string feat
 
         detector.detect(dbImg, dbKeyPoints);
         extractor.compute(dbImg, dbKeyPoints, despDB);
-    /*
-        \put all descripotrs into featureCLuster 
-    */
+
+    /* put all descripotrs into featureCLuster */
 
         featureCluster.push_back(despDB);
  
-    /*
-        \ descriptor index -> image index 
-    */
+    /* descriptor index -> image index */
         for (int j = 0; j < despDB.rows; j++){
             index_IMG.push_back(i);
         }
@@ -88,20 +83,7 @@ void ImgMatch::init_DB(int size_DB,string add_DB, string indexImgAdd,string feat
         outFile << t << "\n";
 
     }
-    // for (auto &t : index_IMG){
-    //  if(t!=lastIndex){
-    //      if(imgCount!=0){
-    //          printf("Count for %d is %d \n",imgCount,dscCnt_IMG.at(imgCount-1));
-    //      }
-    //      dscCnt_IMG.push_back(1);
-    //      lastIndex++;
-    //      imgCount++;
-            
-    //  }
-    //  else{
-    //      dscCnt_IMG.at(t-1)=dscCnt_IMG.at(t-1)+1;
-    //  }
-    // }
+    
     for (auto &t : index_IMG){
         if(t!=lastIndex){
             if ((t = lastIndex + 1)) {    
@@ -171,18 +153,7 @@ void ImgMatch:: init_matchImg(string indexImgAdd, string featureClusterAdd,strin
     while (inFile >> t){
         index_IMG.push_back(t);
     }
-    // for (auto &t : index_IMG){
-    //  if(t==lastIndex){
-    //      dscCnt_IMG.at(t)=dscCnt_IMG.at(t)+1;
-    //  }
-    //  else{
-    //      dscCnt_IMG.push_back(1);
-    //  }
-
-    // }
-    // for (std::vector<int>::iterator it = index_IMG.begin() ; it != index_IMG.end(); ++it){
-    //  std::cout << ' ' << *it;
-    // }
+    
     ifstream inFile2("indexDscNo");
     while (inFile2 >> t){
         dscCnt_IMG.push_back(t);
@@ -197,12 +168,14 @@ void ImgMatch:: init_matchImg(string indexImgAdd, string featureClusterAdd,strin
     //time after loading database
     gettimeofday(&tpend,NULL);
     timeuse=1000000*(tpend.tv_sec-tpstart.tv_sec)+tpend.tv_usec-tpstart.tv_usec;// notice, should include both s and us
-    // printf("used time:%fus\n",timeuse);
     printf("loading database:%fms\n",timeuse / 1000);
 
     gettimeofday(&tpstart,NULL);
-    //build KDtree
+
+    /* build KDtree */
     flannIndex.build(featureCluster, flann::KMeansIndexParams(), cvflann::FLANN_DIST_EUCLIDEAN);
+
+
     //time after building tree
     gettimeofday(&tpend,NULL);
     timeuse=1000000*(tpend.tv_sec-tpstart.tv_sec)+tpend.tv_usec-tpstart.tv_usec;// notice, should include both s and us
@@ -215,59 +188,52 @@ void ImgMatch::matchImg(string srcImgAdd){
     double timeuse;
     gettimeofday(&tpstart,NULL);
 
+    /* default matched index is 0, means no matching image is found */
+    matchedImgIndex = 0;
+
     srcImg = imread(srcImgAdd);
     if (!srcImg.data){
         cout << "srcImg NOT found" << endl;
-        matchedImgIndex = 0;
         return;
     }
-    // -- default matched index is 0, means no matching image is found
-     matchedImgIndex = 0;
 
-     /*
-        \calculate input image's descriptor
-    */
+     /* calculate input image's descriptor */
     if(deb)
       printf("read source image success! start calculate descriptor of source image\n");
+
     SurfFeatureDetector detector(minHessian);
     SurfDescriptorExtractor extractor;
     detector.detect(srcImg, keyPoints1);
     extractor.compute(srcImg, keyPoints1, despSRC);
-    // const int despImgRows = index_IMG.size();
+
     if(deb)
       printf("start match source image\n");
-    if(deb){
-      printf("featureCluster size is%d",featureCluster.rows);
-      printf("source image descriptor size is %d",despSRC.rows);
-      
-    }
+    
+    /* check whether it can extract descriptors from source image, if it is empty then exits */
     if(despSRC.empty()){
-      printf("source iamge is empty, quit");
+      printf("Error: none descriptors can be extracted from source image");
       return;    
     }
 
-    //time after isolating descriptor
+    /* calculate time of extracting descriptors */
     gettimeofday(&tpend,NULL);
-    timeuse=1000000*(tpend.tv_sec-tpstart.tv_sec)+tpend.tv_usec-tpstart.tv_usec;// notice, should include both s and us
-    // printf("used time:%fus\n",timeuse);
+    timeuse=1000000*(tpend.tv_sec-tpstart.tv_sec)+tpend.tv_usec-tpstart.tv_usec;
     printf("descriptor isolation:%fms\n",timeuse / 1000);
 
 
     gettimeofday(&tpstart,NULL);
-    //flann::Index flannIndex(featureCluster, flann::KDTreeIndexParams(), cvflann::FLANN_DIST_EUCLIDEAN);
+
+    /* start knn search, looking for matched descriptors in the database with the minimal distance to those in the source image */
     const int knn = 2;
     flannIndex.knnSearch(despSRC, indices, dists, knn, flann::SearchParams());
-    if(deb)
-      printf("total number of found descriptors is %d\n",despSRC.rows);
-    /*
-        \find best match img
+
+    /* 
+        @ despSRC query Mat
+        @ para indices 
+        @ para dists
     */
-    //time after search
-    gettimeofday(&tpend,NULL);
-    timeuse=1000000*(tpend.tv_sec-tpstart.tv_sec)+tpend.tv_usec-tpstart.tv_usec;// notice, should include both s and us
-    // printf("used time:%fus\n",timeuse);
-    printf("post knn search:%fms\n",timeuse / 1000);
       
+     /* find best match img */
     float nndrRatio = 0.8f;
     vector<ImgFreq>imgFreq;
     for (int i = 0; i < indices.rows; i++){
@@ -290,15 +256,7 @@ void ImgMatch::matchImg(string srcImgAdd){
             }
         }
     }
-    //flannIndex.~Index();
- 
-    //display possible matched image index
-    /*
-    for (auto&t : imgFreq){
-    cout << "possible imatch " << t.ImgIndex << " times is: " << t.Freq << endl;
-    }
-    */
-     
+   
  
     int maxFreq = 1;
     for (auto &t : imgFreq){
@@ -306,25 +264,13 @@ void ImgMatch::matchImg(string srcImgAdd){
             maxFreq = t.Freq;
     }
 
-    gettimeofday(&tpend,NULL);
-    timeuse=1000000*(tpend.tv_sec-tpstart.tv_sec)+tpend.tv_usec-tpstart.tv_usec;// notice, should include both s and us
-    // printf("used time:%fus\n",timeuse);
-    // printf("used time:%fms\n",timeuse / 1000);
-    
-    /*
-    \if max matched times is smaller than 3, it fails to find a matched object
-    */
-    if(deb){
-      printf("max matched time is%d\n",maxFreq);
-    }
-    // if (maxFreq < 3){
-    //     // cout << "Do not find matched ojbect" << endl;
-    //     return;
-    // }
+    /* if max matched times is smaller than 3, it fails to find a matched object */    
+   
     for (auto &t : imgFreq){ 
         if (t.Freq == maxFreq)
             matchedImgIndex = t.ImgIndex;
     }
+
     if (matchedImgIndex != 0) {
         if (maxFreq < .02*dscCnt_IMG.at(matchedImgIndex-1)){
             // cout << "Do not find matched ojbect" <<oendl;
@@ -360,27 +306,44 @@ vector<float> ImgMatch::calLocation(){
   
   if( matchedImgIndex == 0)
     return matchedLocation;
-
+    
     char filename[100];
-    // sprintf(filename, "./imgDB/IMG_%d.jpg", matchedImgIndex);
     sprintf(filename, "/demo/img/%d.jpg", matchedImgIndex);
     Mat matchImg = imread(filename);
- 
-    SurfFeatureDetector detector(minHessian);
-    SurfDescriptorExtractor extractor;
-    detector.detect(matchImg, keyPoints2);
-    extractor.compute(matchImg, keyPoints2, despDB);
+
+    int startPosMatchedDescriptor= 0;
+    int endPosMatchedDescriptor = 0; 
+    if (matchedImgIndex != 1){
+    for( int i = 0; i < matchedImgIndex - 1; i++){
+
+      startPosMatchedDescriptor += dscCnt_IMG.at(i);
+    }
+        endPosMatchedDescriptor = startPosMatchedDescriptor + dscCnt_IMG.at(matchedImgIndex -1 ) - 1;
+    }else{
+        endPosMatchedDescriptor = dscCnt_IMG.at(0) - 1;
+    }
+      /* find descriptors of matchedImg from featureCluster and put into despDB */
+
+      Mat *matchImgDesp = new Mat (endPosMatchedDescriptor - startPosMatchedDescriptor + 1, 64, 5);
+
+      int rowMatchImgDesp = 0;
+      for (int i = startPosMatchedDescriptor; i <= endPosMatchedDescriptor; i++){
+        featureCluster.row(i).copyTo(matchImgDesp->row(rowMatchImgDesp));
+        rowMatchImgDesp++;
+      }
+
+
 
     FlannBasedMatcher matcher;
     vector<DMatch>matches;
     // -- Rematch matched image in database with source image to check their matched descriptor
-    matcher.match(despDB, despSRC, matches);
+    matcher.match(*matchImgDesp, despSRC, matches);
  
  
     double max_dist = 0; double min_dist = 100;
  
     //-- Quick calculation of max and min distances between keypoints
-    for (int i = 0; i < despDB.rows; i++)
+    for (int i = 0; i < matchImgDesp->rows; i++)
     {
         double dist = matches[i].distance;
         if (dist < min_dist) min_dist = dist;
@@ -390,7 +353,7 @@ vector<float> ImgMatch::calLocation(){
     //-- Draw only "good" matches (i.e. whose distance is less than 3*min_dist )
     std::vector< DMatch > good_matches;
  
-    for (int i = 0; i < despDB.rows; i++)
+    for (int i = 0; i < matchImgDesp.rows; i++)
     {
         if (matches[i].distance < 3 * min_dist)
         {
@@ -400,12 +363,10 @@ vector<float> ImgMatch::calLocation(){
     /*
         \test size of good_matches, if it is smaller than 4, then it fails to draw an outline of a mathed object
     */
-    if(deb)
-      printf("number of good match is%zu\n",good_matches.size());
-    if (good_matches.size() < 4){
-        // cout << "not find matched object" << endl;
+    if(deb)printf("number of good match is%zu\n",good_matches.size());
+
+    if (good_matches.size() < 4) 
         return matchedLocation;
-    }
  
     Mat img_matches = srcImg;
      
@@ -430,28 +391,7 @@ vector<float> ImgMatch::calLocation(){
  
     perspectiveTransform(obj_corners, scene_corners, H);
  
-    /*
-        draw rectangle to localize the object( draw four lines on given points)
-        four points postions & type: float
-        A:scene_corner[0].x, scene_corner[0].y
-        B:scene_corner[1].x, scene_corner[1].y
-        C:scene_corner[2].x, scene_corner[2].y
-        D:scene_corner[3].x, scene_corner[3].y
- 
-        draw circle to localize the object ( draw circle based on center and radius
-        center: scene_corners[0].x + (scene_corners[1].x - scene_corners[0].x) / 2, scene_corners[0].y + (scene_corners[3].y - scene_corners[0].y) / 2
-        radius: sqrt(((scene_corners[1].x - scene_corners[0].x) / 2)*( (scene_corners[1].x - scene_corners[0].x) / 2) + ((scene_corners[3].y - scene_corners[0].y) / 2 )* ((scene_corners[3].y - scene_corners[0].y) / 2));
-    */
- 
-    /*
-    line(img_matches, scene_corners[0] , scene_corners[1] , Scalar(0, 0, 0), 2);
-    line(img_matches, scene_corners[1] , scene_corners[2] , Scalar(0, 0, 0), 2);
-    line(img_matches, scene_corners[2] , scene_corners[3] , Scalar(0, 0, 0), 2);
-    line(img_matches, scene_corners[3] , scene_corners[0] , Scalar(0, 0, 0), 2);
- 
-    circle(img_matches, center, radius, Scalar(0, 0, 0), 2, 0);
-    */
-
+    
     if (matchedLocation.size() >= 8)
     {
         matchedLocation.clear();
