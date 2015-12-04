@@ -1,0 +1,47 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+client/client-OpenCV
+server/server-OpenCV
+storm/assist/starter
+encryption/AEScipher
+
+#Compiled Maven Target
+storm/target/*
+
+# Compiled Java CLass
+*.class
+
+# Compiled Dynamic libraries
+#*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# image files
+*.jpeg
+*.jpg
+# Except for sample images and database
+!jclient/pics/orbit-sample.jpg
+!client/pics/orbit-sample.jpg
+!database/img/*
+
+# cmake files
+client/CMakeCache.txt
+client/CMakeFiles/*
+server/CMakeCache.txt
+server/CMakeFiles/*
+*.cmake
+
+# database files
+server/imgDB/*
+server/infoDB/*
+*.yml
+server/indexImgTable
+server/indexDscNo
+storm/src/jvm/storm/winlab/cps/indexImgTable
+*.txt
+!database/info/*

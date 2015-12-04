@@ -1,0 +1,14 @@
+
+INTERFACE = ether,eth1,manual, 10.15.1.2, 00:03:1d:0c:d3:59
+#INTERFACE node1-1(server) interface name, node1-2(client) network info
+
+POLICY = bestperformance
+
+BUFFER_SIZE = 10
+
+DEFAULT_GUID = 102
+#server GUID 102
+
+IF_SCAN_PERIOD = 5
+
+CSYN_TO = 200000
