@@ -33,6 +33,15 @@ string matchIndex = "";
 float coord[8];
 int delay_time = 0;
 
+/*virtual network para*/
+int method;
+double param1;
+double param2;
+int guid;
+int virtualGuid;
+int routerVirtualGuid;
+int destinationGuid;
+
 struct arg_transmit {
     int sock;
     char file_name[100];

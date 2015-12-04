@@ -14,14 +14,26 @@
 #include "MFPackager.h"
 
 MFPackager::MFPackager(int src_GUID, int dst_GUID, int set_debug) {
+
     this->src_GUID = src_GUID;
     this->dst_GUID = dst_GUID;
     debug = set_debug;
 
-    /* init mfapi here */
+    /* init mfapi here, open mf stack */
     int ret = 0;
     printf("------ open the MF now -------\n");
-    ret = mfopen(&handle, "basic\0", 0, src_GUID);
+
+    /* virtual client & router GUID */
+    int virtualGuid = 1;
+    routerVirtualGuid = 10001;
+
+    std::ostringstream stringStream;
+    stringStream << "virtual:"<< virtualGuid << ":" << routerVirtualGuid;
+    std::string copyOfStr = stringStream.str();
+    const char *message = copyOfStr.c_str();
+
+    ret = mfopen(&handle, message, 0, src_GUID);
+
     if (ret) {
         printf("mfopen error\n"); 
         exit(1);
@@ -44,7 +56,7 @@ int MFPackager::sendImage(char* buf, int buf_size) {
     sprintf(tmp, "%d,", buf_size);
     memcpy(tmp + 10, buf, buf_size);
 
-    int ret = mfsend(&handle, tmp, sizeof(tmp), dst_GUID, 0);
+    int ret = mfsend(&handle, tmp, sizeof(tmp), dst_GUID, MF_VIRTUAL_DATA);
     if (ret < 0) {
         printf ("mfsend res error\n");
         return -1;
@@ -73,7 +85,7 @@ int MFPackager::recvImage(char* buf, int buf_size) {
 }
 
 int MFPackager::sendResult(char* buf, int buf_size) {
-    int ret = mfsend(&handle, buf, buf_size, dst_GUID, 0);
+    int ret = mfsend(&handle, buf, buf_size, dst_GUID, MF_VIRTUAL_DATA);
     if (ret < 0) {
         printf ("mfsend res error\n");
         return -1;

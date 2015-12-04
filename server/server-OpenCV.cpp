@@ -33,6 +33,7 @@
 #include "Metrics.h"
 #include "MFPackager.h"
 #include "global_config.h"
+#include "aspgenerator.h"
 
 
 /******************************************************************************
@@ -956,7 +957,7 @@ void server_main()
 
         } /* end of while */
     }
-    // new orbit mode
+    // mf virtual network 
     else if (mf) {
         // start transmit and result threads
         pthread_t thread1, thread2;
@@ -973,6 +974,8 @@ void server_main()
             fprintf(stderr,"pthread_create error!\n");
         }
         pthread_detach(thread2);
+        //start generating asp 
+        aspGenerator.start();
         pause();
     }
 
@@ -1125,6 +1128,7 @@ void signal_handler(int sig)
         delete producer;
     }
     delete metrics;
+    aspGenerator.stop();
     pthread_cancel(mflistenThread);
     pthread_mutex_destroy(&queue_map_lock);
     pthread_mutex_destroy(&sem_map_lock);
@@ -1146,7 +1150,7 @@ void signal_handler(int sig)
 
 int main(int argc, char *argv[])
 {
-    int src_GUID = -1, dst_GUID = -1;
+    int src_GUID = -1, dst_GUID = -1, router_GUID = -1;
     int max_image = 5;
 
     /* parameter parsing */
@@ -1162,6 +1166,7 @@ int main(int argc, char *argv[])
             {"d", no_argument, 0, 0},
             {"m", required_argument, 0, 0},
             {"o", required_argument, 0, 0},
+            {"r", required_argument,0,0},
             {"storm", no_argument, 0, 0},
             {"train", no_argument, 0, 0},
             {"p", required_argument, 0, 0},
@@ -1221,28 +1226,33 @@ int main(int argc, char *argv[])
             dst_GUID = strtol(optarg, NULL, 10);
             break;
 
-            /* storm mode */
+            /* server's access router's GUID */
         case 8:
+            router_GUID = strtol(optarg, NULL, 10);
+            break;
+
+            /* storm mode */
+        case 9:
             storm = true;
             break;
 
             /* train mode */
-        case 9:
+        case 10:
             train = true;
             break;
 
             /* parallelism level */
-        case 10:
+        case 11:
             max_image = strtol(optarg, NULL, 10);
             break;
 
             /* kafka mode */
-        case 11:
+        case 12:
             kafka = true;
             break;
 
             /* new orbit mode */
-        case 12:
+        case 13:
             mf = true;
             tcp = false;
             break;
@@ -1296,6 +1306,8 @@ int main(int argc, char *argv[])
         else if (mf) {
             // init the MFPackager
             mfpack = new MFPackager(src_GUID, dst_GUID, debug);
+            aspGenerator.setMfHandle(mfpack.getMFHandle());
+            aspGenerator.init();
         }
 
     }

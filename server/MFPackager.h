@@ -17,16 +17,19 @@ using namespace std;
 class MFPackager {
 public:
     MFPackager(int src_GUID, int dst_GUID, int debug);
+    MFPackager(int src_GUID, int dst_GUID, int accessRouter_GUID, int debug);
     ~MFPackager();
     int getMyGUID();
     int sendImage(char* buf, int buf_size);
     int recvImage(char* buf, int buf_size);
     int sendResult(char* buf, int buf_size);
     int recvResult(char* buf, int buf_size);
+    struct *Handle getMFHandle();
 
 private:
     int src_GUID;
     int dst_GUID;
+    int accessRouter_GUID;
     int debug = 0;
     struct Handle handle;
 };

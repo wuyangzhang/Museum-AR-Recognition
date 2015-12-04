@@ -21,6 +21,8 @@ MFPackager* mfpack;
 
 MsgDistributor MsgD;
 
+// ASP Generator
+ASPGenerator aspGenerator;
 // Kafka Producer
 bool kafka = false;
 KafkaProducer* producer;
