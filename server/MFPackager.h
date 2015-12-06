@@ -24,7 +24,7 @@ public:
     int recvImage(char* buf, int buf_size);
     int sendResult(char* buf, int buf_size);
     int recvResult(char* buf, int buf_size);
-    struct *Handle getMFHandle();
+    struct Handle* getMFHandle();
 
 private:
     int src_GUID;

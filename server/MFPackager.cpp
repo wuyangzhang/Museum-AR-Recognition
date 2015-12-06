@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 #include "MFPackager.h"
 
 MFPackager::MFPackager(int src_GUID, int dst_GUID, int set_debug) {
@@ -67,7 +68,7 @@ int MFPackager::getMyGUID() {
     return src_GUID;
 }
 
-struct *Handle MFPackager::getMFHandle(){
+struct Handle* MFPackager::getMFHandle(){
     return &this->handle;
 }
 

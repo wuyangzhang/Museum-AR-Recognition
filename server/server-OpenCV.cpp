@@ -1306,7 +1306,8 @@ int main(int argc, char *argv[])
         else if (mf) {
             // init the MFPackager
             mfpack = new MFPackager(src_GUID, dst_GUID, debug);
-            aspGenerator.setMfHandle(mfpack.getMFHandle());
+	   
+            aspGenerator.setMfHandle(mfpack->getMFHandle());
             aspGenerator.init();
         }
 

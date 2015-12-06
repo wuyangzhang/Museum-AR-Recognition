@@ -60,7 +60,7 @@ void ASPGenerator::setCurrentLoad(double load){
 */
 void ASPGenerator::sendASP(double metric) {
 	unsigned int reqps = (unsigned int)(metric * (double)UINT_MAX);
-	requestsInPeriod = 0;U
+	requestsInPeriod = 0;
 	/*virtual network asp [type, senderVirtualGuild, sequence(number of asp), nodeMetric], destinationGUID->access router*/
 	virtual_network_asp_t asp;
 	asp.type = VIRTUAL_ASP_PKT;
@@ -98,7 +98,7 @@ bool ASPGenerator::init() {
 
 /* sendASP(load) : load -> metrics */
 void ASPGenerator::mainLoop() {
-	std::cout << "Start ASP generator with period " << sf << std::endl;
+	std::cout << "Start ASP generator with period " << period << std::endl;
 	cont = true;
 	while(cont){
 		// Zzz TODO
