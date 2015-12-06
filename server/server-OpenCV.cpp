@@ -1304,11 +1304,23 @@ int main(int argc, char *argv[])
             MsgD.init(src_GUID, dst_GUID, debug);
         }
         else if (mf) {
-            // init the MFPackager
+            /* ASR mf model */
+            /* Initialize OML */
+            if((ret = omlc_init("vserver", &argc, argv, NULL)) < 0) {
+                 logerror("Could not initialise OML\n");
+                 return -1;
+            }
+            /* Initialise measurement points and start OML */
+            oml_register_mps(); /* Defined in virtual-server_oml.h */
+            if(omlc_start()) {
+                logerror("Could not start OML\n");
+                return -1;
+            }
             mfpack = new MFPackager(src_GUID, dst_GUID, debug);
 	   
             aspGenerator.setMfHandle(mfpack->getMFHandle());
             aspGenerator.init();
+            aspGenerator.setOmlMps(oml_mps);
         }
 
     }
