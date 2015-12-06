@@ -13,10 +13,7 @@
 #include <popt.h>
 #include <oml2/omlc.h>
 #include <pthread.h>
-
 #include "virtual-server_oml.h"
-//
-//#include "config.h"
 
 class ASPGenerator {
 

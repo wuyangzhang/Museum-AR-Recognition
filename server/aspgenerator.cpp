@@ -69,8 +69,8 @@ void ASPGenerator::sendASP(double metric) {
 	asp.nodeMetric = reqps;
 
 	std::cout << "Sending ASP message " << sequence << " with metric value " << reqps
-			<< " given " << requestsInPeriod << " requests in period " << std::endl;
-
+		  << " given " << requestsInPeriod << " requests in period " << "destinationGuid"<<destinationGuid<<std::endl;
+	
 	mfsend(mfHandle, (void *)&asp, VIRTUAL_ASP_SIZE, destinationGuid, MF_VIRTUAL_ASP);
 	sequence ++;
 }
@@ -112,7 +112,7 @@ void ASPGenerator::mainLoop() {
 		//	sendOMLData(metric);
 			//Zzz TODO
 			//sendASP(load);
-			sendASP(0.5);
+			sendASP(0.8);
 		}
 	}
 }
