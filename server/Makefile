@@ -1,11 +1,3 @@
-###############################################################
-#
-# Purpose: Makefile for "server-OpenCV"
-# Author.: Zihong Zheng
-# Version: 0.1
-# License: 
-#
-###############################################################
 
 CC = g++
 
@@ -30,27 +22,17 @@ all: build
 	
 build: $(SERVER)
 	
-$(SERVER): $(OBJS) 
+$(SERVER): config.h $(SERVER)_popt.h $(SERVER)_oml.h $(OBJS) 
+	$(info "Generating executalbe virtual-server")
 	$(CC) $(OBJECTS) -o $@ $(LFLAGS) 
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
 
 $(SERVER)_popt.h: $(SERVER).rb
-	$(SCAFFOLD) --pots $<
+	$(SCAFFOLD) --opts $<
+
 $(SERVER)_oml.h: $(SERVER).rb
 	$(SCAFFOLD) --oml $<
-run:
-	./server-OpenCV
-
-debug:
-	./server-OpenCV -d
-
-orbit:
-	sudo ./server-OpenCV -orbit -m 102 -o 101
-
-odebug:
-	sudo ./server-OpenCV -orbit -m 102 -o 101 -d
-
 clean:
-	rm -rf *.o $(EXECUTABLE)
+	rm -rf *.o $(SERVER)

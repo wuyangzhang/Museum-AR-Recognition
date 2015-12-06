@@ -34,7 +34,9 @@
 #include "MFPackager.h"
 #include "global_config.h"
 #include "aspgenerator.h"
-
+#include "config.h"
+#include "virtual-server_popt.h"
+#include "virtual-server_oml.h"
 
 /******************************************************************************
 Description.: Display a help message
@@ -1148,7 +1150,7 @@ void signal_handler(int sig)
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc,const  char **argv)
 {
     int src_GUID = -1, dst_GUID = -1, router_GUID = -1;
     int max_image = 5;
@@ -1306,7 +1308,8 @@ int main(int argc, char *argv[])
         else if (mf) {
             /* ASR mf model */
             /* Initialize OML */
-            if((ret = omlc_init("vserver", &argc, argv, NULL)) < 0) {
+	  int ret;
+	  if(( ret = omlc_init("vserver", &argc, argv, NULL)) < 0) {
                  logerror("Could not initialise OML\n");
                  return -1;
             }
