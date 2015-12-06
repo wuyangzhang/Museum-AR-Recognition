@@ -11,22 +11,35 @@ CC = g++
 
 CFLAGS +=-c -g -O0 -Wall -std=c++11 -I$(MF_HOME)/common -I$(MF_HOME)/netapi/c -DLINUX -I/usr/local/include/librdkafka
 
-LFLAGS = -lmfapi -lz -lpthread -lrt `pkg-config --cflags --libs opencv` -lcrypto -lrdkafka++ -lrdkafka
+LFLAGS = -lmfapi -lz -lpthread -lrt `pkg-config --cflags --libs opencv` -lcrypto -lrdkafka++ -lrdkafka -loml2 -locomm -lpopt
 
-SOURCES = server-OpenCV.cpp ImgMatch.cpp MsgDistributor.cpp KafkaProducer.cpp Metrics.cpp MFPackager.cpp
+SOURCES = server-OpenCV.cpp ImgMatch.cpp MsgDistributor.cpp KafkaProducer.cpp Metrics.cpp MFPackager.cpp aspgenerator.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
-EXECUTABLE = server-OpenCV
+SERVER  = virtual-server
 
-all: $(SOURCES) $(EXECUTABLE)
+SCAFFOLD = /usr/bin/oml2-scaffold
+
+SRCS = $(wildcard *.cpp)
+OBJS = $(SRCS:%.cpp=%.o)
+SRCS_EX_LESS := $(filter-out server-OpenCV.cpp, $(SRCS)	)
+OBJS_EX_LESS = $(SRCS_EX_LESS:%.cpp=%.o)
+
+all: build
 	
-$(EXECUTABLE): $(OBJECTS) 
+build: $(SERVER)
+	
+$(SERVER): $(OBJS) 
 	$(CC) $(OBJECTS) -o $@ $(LFLAGS) 
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
 
+$(SERVER)_popt.h: $(SERVER).rb
+	$(SCAFFOLD) --pots $<
+$(SERVER)_oml.h: $(SERVER).rb
+	$(SCAFFOLD) --oml $<
 run:
 	./server-OpenCV
 
