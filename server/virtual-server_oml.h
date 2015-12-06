@@ -25,7 +25,7 @@ typedef struct {
 } oml_mps_t;
 
 
-#ifdef OML_FROM_MAIN
+  //#ifdef OML_FROM_MAIN
 /*
  * Only declare storage once, usually from the main
  * source, where OML_FROM_MAIN is defined
@@ -47,15 +47,15 @@ oml_register_mps(void)
 
 }
 
-#else
+  //#else
 /*
  * Not included from the main source, only declare the global pointer
  * to the MPs and injection helpers.
  */
 
-extern oml_mps_t* g_oml_mps_virtual_server;
+//extern oml_mps_t* g_oml_mps_virtual_server;
 
-#endif /* OML_FROM_MAIN */
+//#endif /* OML_FROM_MAIN */
 
 static inline int
 oml_inject_app_metrics(OmlMP *mp, const char *GUID, double load)

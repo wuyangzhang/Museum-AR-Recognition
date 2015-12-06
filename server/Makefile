@@ -5,7 +5,7 @@ CFLAGS +=-c -g -O0 -Wall -std=c++11 -I$(MF_HOME)/common -I$(MF_HOME)/netapi/c -D
 
 LFLAGS = -lmfapi -lz -lpthread -lrt `pkg-config --cflags --libs opencv` -lcrypto -lrdkafka++ -lrdkafka -loml2 -locomm -lpopt
 
-SOURCES = server-OpenCV.cpp ImgMatch.cpp MsgDistributor.cpp KafkaProducer.cpp Metrics.cpp MFPackager.cpp aspgenerator.cpp
+SOURCES = virtual-server.cpp ImgMatch.cpp MsgDistributor.cpp KafkaProducer.cpp Metrics.cpp MFPackager.cpp aspgenerator.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 

@@ -112,7 +112,7 @@ void ASPGenerator::mainLoop() {
 		//	sendOMLData(metric);
 			//Zzz TODO
 			//sendASP(load);
-			sendASP(0.5);
+			sendASP(0.8);
 		}
 	}
 }
