@@ -32,6 +32,12 @@
 #include "KafkaProducer.h"
 #include "Metrics.h"
 #include "MFPackager.h"
+<<<<<<< HEAD
+=======
+#include "global_config.h"
+#include "aspgenerator.h"
+#include "config.h"
+>>>>>>> origin/cloud
 #include <popt.h>
 #include <oml2/omlc.h>
 
@@ -41,9 +47,12 @@
 #define OML_FROM_MAIN  /* Define storage for some global variables; #define this in only one file */
 #include "virtual-server_oml.h"
 
+<<<<<<< HEAD
 #include "config.h"
 #include "aspgenerator.h"
 #include "global_config.h"
+=======
+>>>>>>> origin/cloud
 /******************************************************************************
 Description.: Display a help message
 Input Value.: -
@@ -1187,7 +1196,10 @@ int main(int argc,const  char **argv)
      while ((c = poptGetNextOpt(optCon)) > 0) {}
 
     /* Initialise measurement points and start OML */
+<<<<<<< HEAD
     
+=======
+>>>>>>> origin/cloud
      oml_register_mps(); /* Defined in virtual-server_oml.h */
     
     if(omlc_start()) {
