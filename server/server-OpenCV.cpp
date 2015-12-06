@@ -1155,106 +1155,94 @@ int main(int argc,const  char **argv)
     int src_GUID = -1, dst_GUID = -1, router_GUID = -1;
     int max_image = 5;
 
+    int ret;
+    /* Reconstruct command line */
+    size_t cmdline_len = 0;
+    for(i = 0; i < argc; i++) {
+    cmdline_len += strlen(argv[i]) + 1;
+    }
+    char cmdline[cmdline_len + 1];
+    cmdline[0] = '\0';
+    for(i = 0; i < argc; i++) {
+    strncat(cmdline, argv[i], cmdline_len);
+    cmdline_len -= strlen(argv[i]);
+    strncat(cmdline, " ", cmdline_len);
+    cmdline_len--;
+    }
+
+    /* Initialize OML */
+    if((ret = omlc_init("vserver", &argc, argv, NULL)) < 0) {
+    logerror("Could not initialise OML\n");
+    return -1;
+    }
+
+    /* Parse command line arguments */
+    poptContext optCon = poptGetContext(NULL, argc, argv, options, 0); /* options is defined in virtual-server_popt.h */
+    while ((c = poptGetNextOpt(optCon)) > 0) {}
+
+    /* Initialise measurement points and start OML */
+    oml_register_mps(); /* Defined in virtual-server_oml.h */
+    if(omlc_start()) {
+    logerror("Could not start OML\n");
+    return -1;
+    }
+
     /* parameter parsing */
-    while(1) {
-        int option_index = 0, c = 0;
-        static struct option long_options[] =
-        {
-            {"h", no_argument, 0, 0},
-            {"help", no_argument, 0, 0},
-            {"v", no_argument, 0, 0},
-            {"version", no_argument, 0, 0},
-            {"orbit", no_argument, 0, 0},
-            {"d", no_argument, 0, 0},
-            {"m", required_argument, 0, 0},
-            {"o", required_argument, 0, 0},
-            {"r", required_argument,0,0},
-            {"storm", no_argument, 0, 0},
-            {"train", no_argument, 0, 0},
-            {"p", required_argument, 0, 0},
-            {"kafka", no_argument, 0, 0},
-            {"mf", no_argument, 0, 0},
-            {0, 0, 0, 0}
-        };
-
-        c = getopt_long_only(argc, argv, "", long_options, &option_index);
-
-        /* no more options to parse */
-        if(c == -1) break;
-
-        /* unrecognized option */
-        if(c == '?')
-        {
-            help();
-            return 0;
-        }
-
-        switch(option_index)
+    while((opt = getopt(argc, (char **)argv, "horbit:dm:o:r:stormtrainp:kafkamf")) != -1) {
+        switch(opt)
         {
             /* h, help */
-        case 0:
-        case 1:
+        case 'h':
             help();
             return 0;
-            break;
-
-            /* v, version */
-        case 2:
-        case 3:
-            printf("Real-Time CPS Server Version: 0.1\n" \
-            "Compilation Date.....: unknown\n" \
-            "Compilation Time.....: unknown\n");
-            return 0;
-            break;
-
             /* orbit, run in orbit mode */
-        case 4:
+        case 'orbit':
             orbit = true;
             tcp = false;
             break;
 
             /* debug mode */
-        case 5:
+        case 'd':
             debug = 1;
             break;
 
             /* mine GUID */
-        case 6:
+        case 'm':
             src_GUID = strtol(optarg, NULL, 10);
             break;
 
             /* other's GUID */
-        case 7:
+        case 'o':
             dst_GUID = strtol(optarg, NULL, 10);
             break;
 
             /* server's access router's GUID */
-        case 8:
+        case 'r':
             router_GUID = strtol(optarg, NULL, 10);
             break;
 
             /* storm mode */
-        case 9:
+        case 'storm':
             storm = true;
             break;
 
             /* train mode */
-        case 10:
+        case 'train':
             train = true;
             break;
 
             /* parallelism level */
-        case 11:
+        case 'p':
             max_image = strtol(optarg, NULL, 10);
             break;
 
             /* kafka mode */
-        case 12:
+        case 'kafka':
             kafka = true;
             break;
 
             /* new orbit mode */
-        case 13:
+        case 'mf':
             mf = true;
             tcp = false;
             break;
@@ -1307,23 +1295,11 @@ int main(int argc,const  char **argv)
         }
         else if (mf) {
             /* ASR mf model */
-            /* Initialize OML */
-	  int ret;
-	  if(( ret = omlc_init("vserver", &argc, argv, NULL)) < 0) {
-                 logerror("Could not initialise OML\n");
-                 return -1;
-            }
-            /* Initialise measurement points and start OML */
-            oml_register_mps(); /* Defined in virtual-server_oml.h */
-            if(omlc_start()) {
-                logerror("Could not start OML\n");
-                return -1;
-            }
             mfpack = new MFPackager(src_GUID, dst_GUID, debug);
-	   
+	       
             aspGenerator.setMfHandle(mfpack->getMFHandle());
             aspGenerator.init();
-            aspGenerator.setOmlMps(oml_mps);
+            aspGenerator.setOmlMps(g_oml_mps_virtual_server);
         }
 
     }
