@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 #include "MFPackager.h"
 
 MFPackager::MFPackager(int src_GUID, int dst_GUID, int set_debug) {
@@ -25,7 +26,7 @@ MFPackager::MFPackager(int src_GUID, int dst_GUID, int set_debug) {
 
     /* virtual client & router GUID */
     int virtualGuid = 1;
-    routerVirtualGuid = 10001;
+    int routerVirtualGuid = 10001;
 
     std::ostringstream stringStream;
     stringStream << "virtual:"<< virtualGuid << ":" << routerVirtualGuid;
