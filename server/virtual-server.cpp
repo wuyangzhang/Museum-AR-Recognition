@@ -1306,10 +1306,11 @@ int main(int argc,const  char **argv)
             mfpack = new MFPackager(src_GUID, dst_GUID, debug);
 	       
             aspGenerator.setMfHandle(mfpack->getMFHandle());
-	    aspGenerator.setDestinationGuid(router_GUID);
+	        aspGenerator.setDestinationGuid(router_GUID);
+            aspGenerator.setGuid(src_GUID);
             aspGenerator.init();
-	    aspGenerator.setOmlMps(g_oml_mps_virtual_server);
-	   
+	        aspGenerator.setOmlMps(g_oml_mps_virtual_server);
+	       
         }
 
     }
