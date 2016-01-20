@@ -1255,7 +1255,8 @@ int main(int argc,const  char **argv)
             tcp = false;
             break;
         case '1':
-
+            aspLoad = strtol(optarg, NULL, 10);
+            break;
         default:
             help();
             return 0;
