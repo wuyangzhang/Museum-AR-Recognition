@@ -1303,7 +1303,7 @@ int main(int argc,const  char **argv)
         }
         else if (mf) {
             /* ASR mf model */
-            mfpack = new MFPackager(src_GUID, dst_GUID, debug);
+            mfpack = new MFPackager(src_GUID, dst_GUID, router_GUID, debug);
 	       
             aspGenerator.setMfHandle(mfpack->getMFHandle());
 	        aspGenerator.setDestinationGuid(router_GUID);
