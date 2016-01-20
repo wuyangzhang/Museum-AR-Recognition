@@ -1312,8 +1312,8 @@ int main(int argc,const  char **argv)
             aspGenerator.setGuid(src_GUID);
             aspGenerator.init();
 	        aspGenerator.setOmlMps(g_oml_mps_virtual_server);
-	        aspGenerator.setCurrentLoad(aspLoad);
-        }
+	 
+	}
 
     }
 

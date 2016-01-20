@@ -98,12 +98,13 @@ bool ASPGenerator::init() {
 
 /* sendASP(load) : load -> metrics */
 void ASPGenerator::mainLoop() {
+  
 	std::cout << "Start ASP generator with period " << period << std::endl;
 	cont = true;
 	while(cont){
 		// Zzz TODO
 		//usleep(period*1000);
-		usleep(500*1000);
+		usleep(1000*1000);
 		sem_wait(&wsem);
 //		unsigned int reqs = (requestsInPeriod > 100) ? 100 : (unsigned int)requestsInPeriod;
 //		double metric = (double) reqs / (double) 100;
@@ -111,8 +112,9 @@ void ASPGenerator::mainLoop() {
 		if(cont){
 		//	sendOMLData(metric);
 			//Zzz TODO
-			//sendASP(load);
-			sendASP(0.8);
+		  //			sendASP(load);
+		  sendASP(0.2);
+		      
 		}
 	}
 }
