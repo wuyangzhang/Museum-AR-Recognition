@@ -778,7 +778,7 @@ void *display_thread(void *arg)
                 drawResult = 0;
             }
 
-            usleep(100 * delay_time); // sleep a while to imitate video catching
+            usleep(1000 * delay_time); // sleep a while to imitate video catching
         }
         // exit(1);
     }
@@ -1043,21 +1043,6 @@ int main(int argc, char *argv[])
             return 0;
         }
     }
-
-    /* register signal handler for <CTRL>+C in order to clean up */
-    // if (tcp) {
-    //     if(signal(SIGINT, signal_handler) == SIG_ERR)
-    //     {
-    //         printf("could not register signal handler\n");
-    //         exit(EXIT_FAILURE);
-    //     }
-
-    //     if (pthread_mutex_init(&sendLock, NULL) != 0)
-    //     {
-    //         printf("\n mutex init failed\n");
-    //         return 1;
-    //     }   
-    // }
 
     if (orbit || mf)
     {
