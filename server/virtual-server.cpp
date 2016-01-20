@@ -1160,7 +1160,7 @@ int main(int argc,const  char **argv)
 {
     int src_GUID = -1, dst_GUID = -1, router_GUID = -1;
     int max_image = 5;
-
+    double aspLoad = 0;
     int c,i,ret,opt;
     /* Reconstruct command line */
     size_t cmdline_len = 0;
@@ -1196,7 +1196,7 @@ int main(int argc,const  char **argv)
     }
    
     /* parameter parsing */
-    while((opt = getopt(argc, (char **)argv, "hOdm:o:r:STp:KM")) != -1) {
+    while((opt = getopt(argc, (char **)argv, "hOdm:o:r:STp:KM1:")) != -1) {
         switch(opt)
         {
             /* h, help */
@@ -1254,6 +1254,7 @@ int main(int argc,const  char **argv)
             mf = true;
             tcp = false;
             break;
+        case '1':
 
         default:
             help();
@@ -1310,7 +1311,7 @@ int main(int argc,const  char **argv)
             aspGenerator.setGuid(src_GUID);
             aspGenerator.init();
 	        aspGenerator.setOmlMps(g_oml_mps_virtual_server);
-	       
+	        aspGenerator.setCurrentLoad(aspLoad);
         }
 
     }
