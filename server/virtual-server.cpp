@@ -184,6 +184,12 @@ void *result_child(void *arg)
         }
         else if (mf) {
             mfpack->sendResult(sendInfo, sizeof(sendInfo));
+
+            // reset ASR metrics 
+            struct timeval tpend;
+            metrics->submitRequestConsumingTime(metrics->getRequestConsumingTime(gettimeofday(&tpend,NULL)));
+            double asrMetric = metrics->getAverageRequestConsumingTime(10); //10 -> window size
+            aspGenerator.setCurrentLoad(asrMetric);
         }
     }
 
@@ -613,6 +619,9 @@ void server_transmit (int sock, string userID)
             printf("[server] file size: %d\n", file_size);
 
             gettimeofday(&tpstart,NULL);
+
+            //add requestStartTime 
+            metrics->submitRequestStartTime(tpstart);
         }
 
         // print out time comsumption
@@ -1015,11 +1024,11 @@ Return Value: -
 void server_run()
 {
     metrics = new Metrics();
-
+    //storm + kafka
     if (kafka) {
         producer = new KafkaProducer();
     }
-
+    // storm , NOT kafka
     if (storm && !kafka)
     {
         // try to get the IP of spout

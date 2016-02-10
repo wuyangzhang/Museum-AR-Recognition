@@ -40,3 +40,36 @@ double Metrics::get_metrics() {
 	}
 	return curNum / max_num_of_requests;
 }
+
+void Metrics::submitRequestStartTime(struct timeval tpstart){
+	this.requestStartTime.push(tpstart)
+}
+
+struct timeval Metrics::getRequestStartTime(){
+	struct timeval startTime = this.requestStartTime.front();
+	this.requestStartTime.pop();
+	return startTime;
+}
+
+double Metrics::getRequestConsumingTime(struct timeval tpend){
+	struct timeval tpstart = this.getRequestStartTime();
+	double timeuse = 1000*(tpend.tv_sec-tpstart.tv_sec)+tpend.tv_usec-tpstart.tv_usec; //request use time in million seconds
+	return timeuse;
+}
+
+void Metrics::submitRequestConsumingTime(double requestConsumingTime){
+	this.requestConsumingTime.push_back(getRequestConsumingTime);
+}
+
+double Metrics::getAverageRequestConsumingTime(int sizeWindow){
+	if(this.requestConsumingTime.size() > sizeWindow){
+		this.requestConsumingTime.pop_front();
+	}
+
+	if(!this.requestConsumingTime.empty()){
+		double averageSum += std::accumulate(this.requestConsumingTime.begin(),this.requestConsumingTime.end(),0.0);
+		return averageSum / this.requestConsumingTime.size();
+	}else{
+		return 0;
+	}
+}

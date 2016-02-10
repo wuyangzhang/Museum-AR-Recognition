@@ -10,6 +10,9 @@
 #ifndef METRICS_H
 #define METRICS_H
 
+#include <queue>
+#include <list>
+
 class Metrics {
 public:
     Metrics();
@@ -19,10 +22,18 @@ public:
     int get_num_ongoing();
     double get_metrics();
 
+//process historical processing time 
+    void submitRequestStartTime(struct timeval tpstart);
+    struct timeval getRequestStartTime();
+    double getRequestConsumingTime(struct timeval tpend);
+    void submitRequestConsumingTime(double requestConsumingTime);
+    double getAverageRequestConsumingTime(int sizeWindow);
 private:
     int request_submitted;
     int request_finished;
     double max_num_of_requests = 100;
+    queue<struct timeval> requestStartTime;
+    list<double> requestConsumingTime;
 };
 
 #endif /* METRICS_H */

@@ -45,7 +45,7 @@ MFPackager::MFPackager(int src_GUID, int dst_GUID, int accessRouter_GUID, int se
     printf("------ open the MF now -------\n");
 
     std::ostringstream stringStream;
-    stringStream << "virtual:"<< src_GUID << ":" << accessRouter_GUID; /*  "virtual:1:50001"*/
+    stringStream << "virtual:"<< src_GUID << ":" << accessRouter_GUID; /*  "virtual:21:50001"*/
     std::string copyOfStr = stringStream.str();
     const char *message = copyOfStr.c_str();
 
