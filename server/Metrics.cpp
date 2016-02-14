@@ -42,7 +42,7 @@ double Metrics::get_metrics() {
 }
 
 void Metrics::submitRequestStartTime(struct timeval tpstart){
-	requestStartTime.push(tpstart)
+	requestStartTime.push(tpstart);
 }
 
 struct timeval Metrics::getRequestStartTime(){
