@@ -1,7 +1,7 @@
 /*************************************************
 #
 # Purpose: header for "Metrics Class"
-# Author.: Zihong Zheng (zzhonzi@gmail.com)
+# Author.: Wuyang Zhang
 # Version: 0.1
 # License: 
 #
@@ -27,7 +27,7 @@ public:
     struct timeval getRequestStartTime();
     double getRequestConsumingTime(struct timeval tpend);
     void submitRequestConsumingTime(double requestConsumingTime);
-    double getAverageRequestConsumingTime(int sizeWindow);
+    double getAverageRequestConsumingTime(unsigned int sizeWindow);
 private:
     int request_submitted;
     int request_finished;
