@@ -187,7 +187,8 @@ void *result_child(void *arg)
 
             // reset ASR metrics 
             struct timeval tpend;
-            metrics->submitRequestConsumingTime(metrics->getRequestConsumingTime(gettimeofday(&tpend,NULL)));
+            gettimeofday(&tpend,NULL);
+            metrics->submitRequestConsumingTime(metrics->getRequestConsumingTime(tpend));
             double asrMetric = metrics->getAverageRequestConsumingTime(10); //10 -> window size
             aspGenerator.setCurrentLoad(asrMetric);
         }
