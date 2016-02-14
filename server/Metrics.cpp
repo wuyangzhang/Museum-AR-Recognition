@@ -58,10 +58,10 @@ double Metrics::getRequestConsumingTime(struct timeval tpend){
 }
 
 void Metrics::submitRequestConsumingTime(double requestConsumingTime){
-	requestConsumingTime.push_back(getRequestConsumingTime);
+	this->requestConsumingTime.push_back(requestConsumingTime);
 }
 
-double Metrics::getAverageRequestConsumingTime(int sizeWindow){
+double Metrics::getAverageRequestConsumingTime(unsigned int sizeWindow){
 	if(requestConsumingTime.size() > sizeWindow){
 		requestConsumingTime.pop_front();
 	}
