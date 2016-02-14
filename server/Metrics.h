@@ -32,8 +32,8 @@ private:
     int request_submitted;
     int request_finished;
     double max_num_of_requests = 100;
-    queue<struct timeval> requestStartTime;
-    list<double> requestConsumingTime;
+    std::queue<struct timeval> requestStartTime;
+    std::list<double> requestConsumingTime;
 };
 
 #endif /* METRICS_H */
