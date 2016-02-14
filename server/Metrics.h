@@ -12,7 +12,7 @@
 
 #include <queue>
 #include <list>
-
+#include <numeric>
 class Metrics {
 public:
     Metrics();
