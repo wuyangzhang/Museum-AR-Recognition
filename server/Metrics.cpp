@@ -51,13 +51,15 @@ struct timeval Metrics::getRequestStartTime(){
 		requestStartTime.pop();
 		return startTime;
 	}
-	return 0;
+	struct timeval startTime;
+	gettimeofday(&startTime,NULL);
+        return startTime;
 
 }
 
 double Metrics::getRequestConsumingTime(struct timeval tpend){
 	struct timeval tpstart = getRequestStartTime();
-	double timeuse = 1000*(tpend.tv_sec-tpstart.tv_sec)+tpend.tv_usec-tpstart.tv_usec; 
+	double timeuse = (1000000*(tpend.tv_sec-tpstart.tv_sec)+tpend.tv_usec-tpstart.tv_usec) / 1000; 
 	printf("Test Request Consuming Time Before submit to calculate average %f\n", timeuse);
 	return timeuse;
 }
@@ -74,7 +76,7 @@ double Metrics::getAverageRequestConsumingTime(unsigned int sizeWindow){
 	if(!requestConsumingTime.empty()){
 		double averageTime = std::accumulate(requestConsumingTime.begin(),requestConsumingTime.end(),0.0) / requestConsumingTime.size();
 	  	printf("Test average time %f\n", averageTime);
-		return averageTime
+		return averageTime;
 	}else{
 		return 0;
 	}

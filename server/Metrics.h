@@ -14,6 +14,8 @@
 #include <list>
 #include <numeric>
 #include <time.h>
+#include <sys/time.h>
+#include <stdio.h>
 class Metrics {
 public:
     Metrics();
