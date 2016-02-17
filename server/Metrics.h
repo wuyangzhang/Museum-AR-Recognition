@@ -16,6 +16,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <stdio.h>
+#include <fstream>
 class Metrics {
 public:
     Metrics();
@@ -31,6 +32,8 @@ public:
     double getRequestConsumingTime(struct timeval tpend);
     void submitRequestConsumingTime(double requestConsumingTime);
     double getAverageRequestConsumingTime(unsigned int sizeWindow);
+    double getAsrMetric(double aveProcessingTime, double maxProcessingTime);
+    void writeMetricToFile(unsigned int matchedIndex, double singleProcessingTime, double asrMetric);
 private:
     int request_submitted;
     int request_finished;

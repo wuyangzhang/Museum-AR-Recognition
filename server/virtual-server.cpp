@@ -211,12 +211,21 @@ void *result_child(void *arg)
             */ 
             struct timeval tpend;
             gettimeofday(&tpend,NULL);
-            metrics->submitRequestConsumingTime(metrics->getRequestConsumingTime(tpend));
-            double asrMetric = metrics->getAverageRequestConsumingTime(10); //10 -> window size
-            aspGenerator.setCurrentLoad(asrMetric);
 
+            double requestConsumingTime = metrics->getRequestConsumingTime(tpend);
+            metrics->submitRequestConsumingTime(requestConsumingTime);
+            /*
+                use ave processing / max processing time , nomalizing the asr metric to between 0 and 1. 
+            */
+
+            double asrMetric = metrics->getAsrMetric(metrics->getAverageRequestConsumingTime(10), 500); //10 -> window size
+            aspGenerator.setCurrentLoad(asrMetric);
             mfpack->sendResult(sendInfo, sizeof(sendInfo));
 
+            /*
+                write asr metric to file
+            */
+            metrics->writeMetricToFile(matchedIndex, requestConsumingTime, asrMetric);
         }
     }
 

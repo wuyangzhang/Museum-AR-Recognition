@@ -81,3 +81,20 @@ double Metrics::getAverageRequestConsumingTime(unsigned int sizeWindow){
 		return 0;
 	}
 }
+
+double Metrics::getAsrMetric(double aveProcessingTime, double maxProcessingTime){
+	if(aveProcessingTime < maxProcessingTime)
+		return aveProcessingTime / maxProcessingTime;
+	else
+		return 1;
+}
+
+void Metrics::writeMetricToFile(unsigned int matchedIndex, double singleProcessingTime, double asrMetric){
+	std::ofstream out;
+	out.open("asrReport", std::ofstream::out | std::ofstream::app);
+	out << matchedIndex <<" "<< singleProcessingTime<<" "<< asrMetric<<"\n";
+	out.close();
+	
+}
+
+
