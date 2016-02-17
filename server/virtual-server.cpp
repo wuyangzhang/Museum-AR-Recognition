@@ -485,7 +485,7 @@ void server_transmit (int sock, string userID)
         if (debug) printf("wait for new request\n");
         char* img;
         // calculate the time consumption here
-        //struct timeval tpstart,tpend;
+        struct timeval tpstart,tpend;
         double timeuse;
 
         if (tcp) {
