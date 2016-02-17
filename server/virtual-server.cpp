@@ -137,9 +137,22 @@ void *result_child(void *arg)
     vector<float> coord;
     ImgMatch imgM;
 
-    // start matching the image
+    /* 
+        start matching the request image
+    */
+
     imgM.matchImg(file_name);
     matchedIndex = imgM.getMatchedImgIndex();
+
+    /* 
+        finish matching the image, and returnn the matching index 
+    */
+
+
+
+    /*
+        if matching index = 0  => no matched image is found
+    */
     if (matchedIndex == 0) 
     {   
         // write none to client
@@ -161,16 +174,25 @@ void *result_child(void *arg)
             printf("Not match.\n\n");
         }
     }
+    /*
+        if matching index != 0  => send back the information of the matched image
+    */
     else
     {
-        // send result to client
-        // coord = imgM.calLocation();
+        /*
+            get the information of the matched image
+        */
         string info = imgM.getInfo();
-        // sprintf(sendInfo, "%s,%d,%f,%f,%f,%f,%f,%f,%f,%f", info.c_str(), matchedIndex, coord.at(0), coord.at(1), coord.at(2), coord.at(3), coord.at(4), coord.at(5), coord.at(6), coord.at(7));
+
+        /*
+            attach the matched location to the information, send them back 
+        */
         sprintf(sendInfo, "%s,%d,%d,%d,%d,%d,%d,%d,%d,%d,", info.c_str(), matchedIndex, 0, 0, 0, 0, 0, 0, 0, 0);
         printf("Matched Index: %d\n\n", matchedIndex);
 
-        if (debug) printf("sendInfo: %s\n", sendInfo);
+        /*
+            send back the information and the location of the matching image
+        */
         if (tcp)
         {
             if (write(sock, sendInfo, sizeof(sendInfo)) < 0)
@@ -185,7 +207,9 @@ void *result_child(void *arg)
         else if (mf) {
             mfpack->sendResult(sendInfo, sizeof(sendInfo));
 
-            // reset ASR metrics 
+            /*
+               update ASR metric (using the average historical processing time)
+            */ 
             struct timeval tpend;
             gettimeofday(&tpend,NULL);
             metrics->submitRequestConsumingTime(metrics->getRequestConsumingTime(tpend));
@@ -613,24 +637,37 @@ void server_transmit (int sock, string userID)
         }
         else if (mf) {
             img = new char[650000]; // large enough to hold the image file
+
+            /*
+                submit a request, and its start time 
+            */
+            gettimeofday(&tpstart,NULL);
+            metrics->submitRequestStartTime(tpstart);
+
+            /*
+                receive the request IMG file from client
+            */
             file_size = mfpack->recvImage(img, 650000);
+
             bzero(file_name_temp, sizeof(file_name_temp));
             sprintf(file_name_temp, "pics/%d.jpg", fake_index++);
             printf("\n[server] file name: [%s]\n", file_name_temp);
             printf("[server] file size: %d\n", file_size);
 
-            gettimeofday(&tpstart,NULL);
-
-            //add requestStartTime 
-            metrics->submitRequestStartTime(tpstart);
+            
         }
 
-        // print out time comsumption
+        /* 
+            print out time comsumption of receiving request IMG file
+        */
+
+        /*
         gettimeofday(&tpend,NULL);
         timeuse=1000000*(tpend.tv_sec-tpstart.tv_sec)+tpend.tv_usec-tpstart.tv_usec;// notice, should include both s and us
-        // printf("used time:%fus\n",timeuse);
         printf("receive used time:%fms\n",timeuse / 1000);
-        // finished
+        */
+
+        // finish receiving the request IMG file
         if (debug) printf("[server] Recieve Finished!\n\n");
 
         // handle the metrics
