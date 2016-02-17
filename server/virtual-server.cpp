@@ -205,7 +205,6 @@ void *result_child(void *arg)
             MsgD.send(sock, sendInfo, sizeof(sendInfo));
         }
         else if (mf) {
-            mfpack->sendResult(sendInfo, sizeof(sendInfo));
 
             /*
                update ASR metric (using the average historical processing time)
@@ -215,6 +214,9 @@ void *result_child(void *arg)
             metrics->submitRequestConsumingTime(metrics->getRequestConsumingTime(tpend));
             double asrMetric = metrics->getAverageRequestConsumingTime(10); //10 -> window size
             aspGenerator.setCurrentLoad(asrMetric);
+
+            mfpack->sendResult(sendInfo, sizeof(sendInfo));
+
         }
     }
 
@@ -482,9 +484,8 @@ void server_transmit (int sock, string userID)
     {
         if (debug) printf("wait for new request\n");
         char* img;
-
         // calculate the time consumption here
-        struct timeval tpstart,tpend;
+        //struct timeval tpstart,tpend;
         double timeuse;
 
         if (tcp) {
@@ -638,11 +639,7 @@ void server_transmit (int sock, string userID)
         else if (mf) {
             img = new char[650000]; // large enough to hold the image file
 
-            /*
-                submit a request, and its start time 
-            */
-            gettimeofday(&tpstart,NULL);
-            metrics->submitRequestStartTime(tpstart);
+           
 
             /*
                 receive the request IMG file from client
@@ -654,6 +651,11 @@ void server_transmit (int sock, string userID)
             printf("\n[server] file name: [%s]\n", file_name_temp);
             printf("[server] file size: %d\n", file_size);
 
+             /*
+                submit a request, and its start time 
+            */
+            gettimeofday(&tpstart,NULL);
+            metrics->submitRequestStartTime(tpstart);
             
         }
 
