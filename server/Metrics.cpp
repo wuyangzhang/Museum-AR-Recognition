@@ -91,8 +91,7 @@ double Metrics::getAsrMetric(double aveProcessingTime, double maxProcessingTime)
 
 void Metrics::writeMetricToFile(unsigned int matchedIndex, double singleProcessingTime, double asrMetric){
 	std::ofstream out;
-	out.open("asrReport", std::ofstream::out | std::ofstream::app);
-	out <<"\t\tASR Report\n";
+	out.open("asrReport", std::ofstream::out);
 	out <<"matched index: "<< matchedIndex <<", single processing time: "<< singleProcessingTime<<", asr metric: "<< asrMetric<<"\n";
 	out.close();
 	
