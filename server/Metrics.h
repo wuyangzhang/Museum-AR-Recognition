@@ -40,6 +40,7 @@ private:
     double max_num_of_requests = 100;
     std::queue<struct timeval> requestStartTime;
     std::list<double> requestConsumingTime;
+    std::ofstream out;
 };
 
 #endif /* METRICS_H */
